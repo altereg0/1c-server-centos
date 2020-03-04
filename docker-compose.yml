@@ -1,0 +1,90 @@
+version: "3.7"
+services:
+  1c-server:
+    build: ./src/1c
+    depends_on:
+      - 1c-pg
+    image: itsbz/1c-server
+    restart: always
+    hostname: srv-1c
+    sysctls:
+      - "net.ipv4.icmp_echo_ignore_broadcasts=0"
+    environment:
+      - SRV1CV8_DEBUG=1
+      - SRV1CV8_PORT=1540
+      - SRV1CV8_REGPORT=1541
+      - SRV1CV8_RANGE=1560:1691
+    ports:
+      - "1540-1541:1540-1541"
+      - "1560-1691:1560-1691"
+      - 67:67/udp
+      - 475:475/udp
+    volumes:
+      - ./volumes/1c-server/home:/home/usr1cv8
+      - ./volumes/1c-server/logs:/var/log
+      - /etc/localtime:/etc/localtime:ro
+    deploy:
+      resources:
+        limits:    
+          memory: 16G
+          cpus: '16.0'
+
+  1c-pg:
+    build: ./src/pg
+    image: itsbz/1c-pg
+    restart: always
+    #network_mode: host
+    hostname: srv-pg
+    environment:
+      - POSTGRES_PASSWORD=Heruvima80
+      - LANG=ru_RU.UTF-8
+      - LANGUAGE=ru_RU.UTF-8
+      - LC_ALL=ru_RU.UTF-8
+      - POSTGRES_INITDB_ARGS='-EUTF-8'
+    ports:
+      - 5432:5432
+    volumes:
+      - ./volumes/1c-pg/data:/var/lib/postgresql/data
+      - ./volumes/1c-pg/conf:/etc/postgresql
+      - ./volumes/1c-pg/log:/var/log/postgresql
+      - /etc/localtime:/etc/localtime:ro
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+          cpus: '16.0'
+
+  1c-pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    hostname: 1c-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@ostrov.team
+      - PGADMIN_DEFAULT_PASSWORD=Heruvima80
+    ports: 
+      - 5050:80
+    volumes:
+      - ./volumes/1c-pgadmin:/root/.pgadmin
+
+
+#  == UNCOMMEBNT THIS IF YOU WANT TO USE MSSQL (1C:Enterprise server for Linux can't work with him for now!)
+#  1c-ms:
+#     user: root
+#     image: mcr.microsoft.com/mssql/server:2017-latest
+#     restart: always
+#     environment:
+#       - ACCEPT_EULA=Y
+#       - MSSQL_SA_PASSWORD=Heruvima80
+#       - MSSQL_PID=6GPYM-VHN83-PHDM2-Q9T2R-KBV83
+#       - MSSQL_MEMORY_LIMIT_MB=32768
+#       - MSSQL_DATA_DIR=/var/opt/mssql
+#       - MSSQL_AGENT_ENABLED=true
+#       - MSSQL_COLLATION=CYRILLIC_GENERAL_CI_AS
+#       - MSSQL_LCID=1033
+#       - MSSQL_LOG_DIR=/var/log/mssql
+#       - TZ=Europe/Moscow
+#     ports:
+#       - 1433:1433
+#     volumes:
+#       - ./volumes/1c-ms/data:/var/opt/mssql
+#       - ./volumes/1c-ms/logs:/var/logs/mssql
