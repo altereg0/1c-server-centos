@@ -1,0 +1,4 @@
+./volumes
+.gitlab-ci.yml
+sftp-config.json
+
