@@ -49,10 +49,10 @@ RUN chmod a+x /docker-entrypoint.sh
 #COPY container/postgresql.conf $PGDATA
 RUN echo 127.0.0.1 srv-pg.solar srv-pg localhost > /etc/hosts
 
-#ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 EXPOSE 5432
-#CMD ["postgres"]
+CMD ["postgres"]
 
 
-ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash"]
