@@ -4,9 +4,10 @@ services:
     build: ./src/1c
     depends_on:
       - 1c-pg
-    image: itsbz/1c-server
+    image: alter/1c_srv
     restart: always
-    hostname: srv-1c
+    hostname: srv-1c.solar
+    #network_mode: host
     sysctls:
       - "net.ipv4.icmp_echo_ignore_broadcasts=0"
     environment:
@@ -31,10 +32,10 @@ services:
 
   1c-pg:
     build: ./src/pg
-    image: itsbz/1c-pg
+    image: alter/1c_pg
     restart: always
     #network_mode: host
-    hostname: srv-pg
+    hostname: srv-pg.solar
     environment:
       - POSTGRES_PASSWORD=Heruvima80
       - LANG=ru_RU.UTF-8
@@ -44,9 +45,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./volumes/1c-pg/data:/var/lib/postgresql/data
-      - ./volumes/1c-pg/conf:/etc/postgresql
-      - ./volumes/1c-pg/log:/var/log/postgresql
+      - ./volumes/1c-pg/data:/var/lib/pgpro/1c-12/data
+      - ./volumes/1c-pg/log:/var/lib/pgpro/1c-12/log
       - /etc/localtime:/etc/localtime:ro
     deploy:
       resources:
@@ -57,7 +57,7 @@ services:
   1c-pgadmin:
     image: dpage/pgadmin4
     restart: always
-    hostname: 1c-pgadmin
+    hostname: srv-pgadmin.solar
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@ostrov.team
       - PGADMIN_DEFAULT_PASSWORD=Heruvima80

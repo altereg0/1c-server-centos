@@ -10,4 +10,4 @@ sudo mkdir -p ./volumes/1c-ms/logs
 
 sudo chown 999 -R ./volumes
 
-sudo docker-compose build
+sudo docker-compose --compatibility build

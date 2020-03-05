@@ -35,13 +35,16 @@ ENV SERVER_VERSION 8.3.16-1224
 
 #RUN dnf -y localinstall /tmp/1C_Enterprise$PLATFORM_VERSION-common-${SERVER_VERSION}.x86_64.rpm 2> /dev/null
 #RUN dnf -y localinstall /tmp/1C_Enterprise$PLATFORM_VERSION-server-${SERVER_VERSION}.x86_64.rpm 2> /dev/null
+
 RUN dnf -y localinstall /tmp/*.x86_64.rpm
 RUN rm /tmp/*.rpm
 RUN mkdir --parent /var/log/1C /home/usr1cv8/.1cv8/1C/1cv8/conf
-RUN chown --recursive usr1cv8:grp1cv8 /var/log/1C /home/usr1cv8
+RUN chown usr1cv8:grp1cv8 -R /var/log/1C /home/usr1cv8
 
 COPY container/docker-entrypoint.sh /
 COPY container/logcfg.xml /home/usr1cv8/.1cv8/1C/1cv8/conf
+RUN chmod a+x /docker-entrypoint.sh
+RUN echo 127.0.0.1 srv-1c.solar srv-1c localhost > /etc/hosts
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 

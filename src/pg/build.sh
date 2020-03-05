@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker image rm its.local/postgres -f
-docker build --tag its.local/postgres .
+docker image rm alter/1c_pg -f
+docker build --tag alter/1c_pg .

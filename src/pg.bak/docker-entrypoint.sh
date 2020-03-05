@@ -63,7 +63,7 @@ if [ "$1" = 'postgres' ]; then
 
 	# look specifically for PG_VERSION, as it is expected in the DB dir
 	if [ ! -s "$PGDATA/PG_VERSION" ]; then
-		eval "su -m postgres -c \"initdb $POSTGRES_INITDB_ARGS\""
+		eval "gosu postgres initdb $POSTGRES_INITDB_ARGS"
 
 		# check password first so we can output the warning before postgres
 		# messes it up
@@ -89,11 +89,10 @@ if [ "$1" = 'postgres' ]; then
 			authMethod=trust
 		fi
 
-		{ echo; echo "host all all 0.0.0.0/0 $authMethod"; } | su -m postgres -c "tee -a \"$PGDATA/pg_hba.conf\" > /dev/null"
+		{ echo; echo "host all all 0.0.0.0/0 $authMethod"; } | gosu postgres tee -a "$PGDATA/pg_hba.conf" > /dev/null
 
 		CONF=$PGDATA/postgresql.conf
 		setConfOption "$CONF" "listen_addresses" "'*'"
-		enableConfOption "$CONF" "listen_addresses"
 
 		# Init log if needed
 		if [ ${LOG_ENABLED:-0} -eq 1 ]; then
@@ -117,10 +116,9 @@ if [ "$1" = 'postgres' ]; then
 
 		# internal start of server in order to allow set-up using psql-client
 		# does not listen on external TCP/IP and waits until start finishes
-		#su -m postgres -c "pg_ctl -D \"$PGDATA\" \
-		#	-o \"-c listen_addresses='localhost'\" \
-		#	-w start"
-		su postgres -m -c "pg_ctl -D $PGDATA -c -w start"
+		gosu postgres pg_ctl -D "$PGDATA" \
+			-o "-c listen_addresses='localhost'" \
+			-w start
 
 		: ${POSTGRES_USER:=postgres}
 		: ${POSTGRES_DB:=$POSTGRES_USER}
@@ -158,15 +156,14 @@ if [ "$1" = 'postgres' ]; then
 			echo
 		done
 
-		su -m postgres -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
+		gosu postgres pg_ctl -D "$PGDATA" -m fast -w stop
 
 		echo
 		echo 'PostgreSQL init process complete; ready for start up.'
 		echo
 	fi
 
-	exec su -m postgres -c "$@"
-	#su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w start"
+	exec gosu postgres "$@"
 fi
 
 exec "$@"

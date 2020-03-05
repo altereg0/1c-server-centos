@@ -1,0 +1,5 @@
+[postgrespro-1c]
+name=Postgres Pro 1C repo
+baseurl=http://repo.postgrespro.ru/pg1c-archive/pg1c-12.2/centos/8/os/x86_64/rpms/
+gpgcheck=1
+enabled=1
