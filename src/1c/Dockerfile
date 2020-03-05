@@ -1,36 +1,44 @@
-FROM ubuntu:xenial
+FROM centos:latest
+MAINTAINER alter@centos.solar
 
-ENV DEBIAN_FRONTEND noninteractive
+RUN rm -r /var/cache/dnf
+ENV LC_ALL=C.UTF-8 LANG=ru_RU.UTF-8 LANGUAGE=ru_RU.UTF-8 TERM=xterm
 
-ENV GOSU_VERSION 1.10
+RUN dnf -y update
+RUN dnf -y install epel-release
 
-RUN apt-get -qq update && apt-get -qq install --yes --no-install-recommends ca-certificates wget locales iputils-ping \
-  && `#----- Install the dependencies -----` \
-  && apt-get -qq install --yes --no-install-recommends fontconfig imagemagick \
-  && `#----- Deal with ttf-mscorefonts-installer -----` \
-  && apt-get -qq install --yes --no-install-recommends xfonts-utils cabextract \
-  && apt-get -qq install libgsf-1-114 ttf-mscorefonts-installer t1utils unixodbc \
-  && wget --quiet --output-document /tmp/ttf-mscorefonts-installer_3.6_all.deb http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.6_all.deb \
-  && dpkg --install /tmp/ttf-mscorefonts-installer_3.6_all.deb 2> /dev/null \
-  && rm /tmp/ttf-mscorefonts-installer_3.6_all.deb \
-  && `#----- Install gosu -----` \
-  && wget --quiet --output-document /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
-  && chmod +x /usr/local/bin/gosu \
-  && gosu nobody true
+#RUN dnf -y install curl 
+RUN dnf -y install libgsf 
+#RUN dnf -y install policycoreutils-python 
+RUN dnf -y install unixODBC 
+#RUN dnf -y install cabextract 
+#RUN dnf -y install xorg-x11-font-utils 
+RUN dnf -y install fontconfig 
+RUN dnf -y install freetype
+#RUN dnf -y install ImageMagick 
+#RUN dnf -y install msttcore-fonts-installer 
+#RUN dnf -y install libatk
+RUN dnf -y install bzip2 
 
-RUN localedef --inputfile ru_RU --force --charmap UTF-8 --alias-file /usr/share/locale/locale.alias ru_RU.UTF-8
-ENV LANG ru_RU.utf8
+RUN dnf -y install langtable glibc-locale-source glibc-langpack-ru glibc-langpack-ru
+#use --quiet to supress warnings!
+RUN localedef -c --quiet --no-archive -i ru_RU -f UTF-8 ru_RU.UTF-8
 
-ADD *.deb /tmp/
+ENV LANG ru_RU.UTF-8
+ENV LANGUAGE ru_RU:UTF-8
+ENV LC_ALL ru_RU.UTF-8
+
+ADD *.rpm /tmp/
 
 ENV PLATFORM_VERSION 83
-ENV SERVER_VERSION 8.3.16-1148
+ENV SERVER_VERSION 8.3.16-1224
 
-RUN dpkg --install /tmp/1c-enterprise$PLATFORM_VERSION-common_${SERVER_VERSION}_amd64.deb 2> /dev/null \
-  && dpkg --install /tmp/1c-enterprise$PLATFORM_VERSION-server_${SERVER_VERSION}_amd64.deb 2> /dev/null \
-  && rm /tmp/*.deb \
-  && mkdir --parent /var/log/1C /home/usr1cv8/.1cv8/1C/1cv8/conf \
-  && chown --recursive usr1cv8:grp1cv8 /var/log/1C /home/usr1cv8
+#RUN dnf -y localinstall /tmp/1C_Enterprise$PLATFORM_VERSION-common-${SERVER_VERSION}.x86_64.rpm 2> /dev/null
+#RUN dnf -y localinstall /tmp/1C_Enterprise$PLATFORM_VERSION-server-${SERVER_VERSION}.x86_64.rpm 2> /dev/null
+RUN dnf -y localinstall /tmp/*.x86_64.rpm
+RUN rm /tmp/*.rpm
+RUN mkdir --parent /var/log/1C /home/usr1cv8/.1cv8/1C/1cv8/conf
+RUN chown --recursive usr1cv8:grp1cv8 /var/log/1C /home/usr1cv8
 
 COPY container/docker-entrypoint.sh /
 COPY container/logcfg.xml /home/usr1cv8/.1cv8/1C/1cv8/conf
@@ -43,4 +51,3 @@ VOLUME /var/log/1C
 EXPOSE 1540-1541 1560-1591
 
 CMD ["ragent"]
-

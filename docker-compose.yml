@@ -26,8 +26,8 @@ services:
     deploy:
       resources:
         limits:    
-          memory: 16G
-          cpus: '16.0'
+          memory: 1G
+          cpus: '2.0'
 
   1c-pg:
     build: ./src/pg
@@ -51,8 +51,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 16G
-          cpus: '16.0'
+          memory: 1G
+          cpus: '2.0'
 
   1c-pgadmin:
     image: dpage/pgadmin4
