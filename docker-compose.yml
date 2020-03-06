@@ -5,9 +5,10 @@ services:
     depends_on:
       - 1c-pg
     image: alter/1c_srv
-    restart: always
+    restart: unless-stopped
     hostname: srv-1c.solar
-    #network_mode: host
+    networks: 
+      - dock
     sysctls:
       - "net.ipv4.icmp_echo_ignore_broadcasts=0"
     environment:
@@ -33,15 +34,16 @@ services:
   1c-pg:
     build: ./src/pg
     image: alter/1c_pg
-    restart: always
-    #network_mode: host
+    restart: unless-stopped
     hostname: srv-pg.solar
+    networks: 
+      - dock
     environment:
-      - POSTGRES_PASSWORD=pswrd
+      - POSTGRES_PASSWORD=postgres
       - LANG=ru_RU.UTF-8
       - LANGUAGE=ru_RU.UTF-8
       - LC_ALL=ru_RU.UTF-8
-      - POSTGRES_INITDB_ARGS='--encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums'
+      - POSTGRES_INITDB_ARGS="--encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums"
     ports:
       - 5432:5432
     volumes:
@@ -56,8 +58,10 @@ services:
 
   1c-pgadmin:
     image: dpage/pgadmin4
-    restart: always
+    restart: unless-stopped
     hostname: srv-pgadmin.solar
+    networks: 
+      - dock
     environment:
       - PGADMIN_DEFAULT_EMAIL=root@local.com
       - PGADMIN_DEFAULT_PASSWORD=pswrd
@@ -66,6 +70,9 @@ services:
     volumes:
       - ./volumes/1c-pgadmin:/root/.pgadmin
 
+networks:
+  dock:
+    driver: bridge
 
 #  == UNCOMMEBNT THIS IF YOU WANT TO USE MSSQL (1C:Enterprise server for Linux can't work with him for now!)
 #  1c-ms:
