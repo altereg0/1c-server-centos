@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #docker image rm alter/1c_srv -f
 docker build --tag alter/1c_srv .
