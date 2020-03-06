@@ -17,9 +17,12 @@ RUN dnf -y install postgrespro-1c-12-server postgrespro-1c-12-contrib
 
 # explicitly set user/group IDs
 #RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
+ENV PATH /opt/pgpro/1c-12/bin:$PATH
+ENV PGDATA /var/lib/pgpro/1c-12/data
+ENV PGLOG /var/log/postgresql
 
-#RUN /opt/pgpro/1c-12/bin/pg-setup initdb --encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums
-RUN /opt/pgpro/1c-12/bin/pg-setup initdb
+RUN /opt/pgpro/1c-12/bin/pg-setup initdb --encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums
+#RUN /opt/pgpro/1c-12/bin/pg-setup initdb
 
 #RUN /opt/pgpro/1c-12/bin/pg-setup service enable
 #RUN service postgrespro-1c-12 start
@@ -31,18 +34,16 @@ RUN su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data 
 
 RUN mkdir /docker-entrypoint-initdb.d
 RUN mkdir /docker-entrypoint-init.d
- 
+
 # Version env
 #ENV PG_MAJOR 11
 #ENV PG_MINOR 4.1
 #ENV PG_RELEASE $PG_MAJOR.$PG_MINOR
 #ENV PG_VERSION $PG_RELEASE-1.stretch.pro
 
-ENV PATH /opt/pgpro/1c-12/bin:$PATH
-ENV PGDATA /var/lib/pgpro/1c-12/data
-ENV PGLOG /var/log/postgresql
 
 VOLUME /var/lib/pgpro/1c-12/data
+VOLUME /var/log/postgresql
 
 COPY docker-entrypoint.sh /
 RUN chmod a+x /docker-entrypoint.sh
@@ -54,5 +55,4 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 5432
 CMD ["postgres"]
 
-
-#ENTRYPOINT ["/bin/bash"]
+# ENTRYPOINT ["/bin/bash"]

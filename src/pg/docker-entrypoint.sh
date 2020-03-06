@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 set -e
 
 function enableConfOption()
@@ -120,7 +120,7 @@ if [ "$1" = 'postgres' ]; then
 		#su -m postgres -c "pg_ctl -D \"$PGDATA\" \
 		#	-o \"-c listen_addresses='localhost'\" \
 		#	-w start"
-		su postgres -m -c "pg_ctl -D $PGDATA -c -w start"
+		exec su postgres -m -c "pg_ctl -D $PGDATA -c -w start"
 
 		: ${POSTGRES_USER:=postgres}
 		: ${POSTGRES_DB:=$POSTGRES_USER}
@@ -158,15 +158,15 @@ if [ "$1" = 'postgres' ]; then
 			echo
 		done
 
-		su -m postgres -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
+		exec su postgres -m -c "pg_ctl -D \"$PGDATA\" -m fast -w stop"
 
 		echo
 		echo 'PostgreSQL init process complete; ready for start up.'
 		echo
 	fi
 
-	exec su -m postgres -c "$@"
+	exec su postgres -m -c "$@"
 	#su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w start"
 fi
-
+echo "FREESTYLE"
 exec "$@"
