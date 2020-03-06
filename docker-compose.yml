@@ -46,7 +46,7 @@ services:
       - 5432:5432
     volumes:
       - ./volumes/1c-pg/data:/var/lib/pgpro/1c-12/data
-      - ./volumes/1c-pg/log:/var/lib/pgpro/1c-12/log
+      - ./volumes/1c-pg/log:/var/log/postgresql
       - /etc/localtime:/etc/localtime:ro
     deploy:
       resources:

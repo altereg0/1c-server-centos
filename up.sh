@@ -10,5 +10,5 @@ sudo mkdir -p ./volumes/1c-pg/log
 
 sudo chown 999 -R ./volumes
 
-sudo docker-compose cd up -d
+sudo docker-compose up -d
 #sudo docker-compose up -d

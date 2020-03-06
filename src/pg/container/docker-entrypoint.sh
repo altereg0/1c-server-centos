@@ -168,5 +168,4 @@ if [ "$1" = 'postgres' ]; then
 	exec su postgres -m -c "$@"
 	#su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w start"
 fi
-echo "FREESTYLE"
 exec "$@"

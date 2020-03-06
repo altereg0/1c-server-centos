@@ -1,17 +1,28 @@
 FROM centos:latest
+MAINTAINER alter@centos.solar
+
+###############################################################################
+# PREPARE
+
+RUN echo 127.0.0.1 srv-pg.solar srv-pg localhost > /etc/hosts
 
 RUN dnf -q -y update
+ENV LC_ALL=C.UTF-8 LANG=ru_RU.UTF-8 LANGUAGE=ru_RU.UTF-8 TERM=xterm
+
+RUN dnf -y update
+RUN dnf -y install epel-release
 
 RUN dnf -y install langtable glibc-locale-source glibc-langpack-ru glibc-langpack-ru
 #use --quiet to supress warnings!
 RUN localedef -c --quiet --no-archive -i ru_RU -f UTF-8 ru_RU.UTF-8
 
-ENV LANG ru_RU.UTF-8
-ENV LANGUAGE ru_RU:UTF-8
-ENV LC_ALL ru_RU.UTF-8
+ENV LANG=ru_RU.UTF-8 LANGUAGE=ru_RU:UTF-8 LC_ALL=ru_RU.UTF-8
+
+###############################################################################
+# BASE
 
 RUN rpm --import http://repo.postgrespro.ru/keys/GPG-KEY-POSTGRESPRO
-COPY postgrespro-1c.repo /etc/yum.repos.d
+COPY ./container/postgrespro-1c.repo /etc/yum.repos.d
 RUN dnf makecache
 RUN dnf -y install postgrespro-1c-12-server postgrespro-1c-12-contrib
 
@@ -35,23 +46,14 @@ RUN su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data 
 RUN mkdir /docker-entrypoint-initdb.d
 RUN mkdir /docker-entrypoint-init.d
 
-# Version env
-#ENV PG_MAJOR 11
-#ENV PG_MINOR 4.1
-#ENV PG_RELEASE $PG_MAJOR.$PG_MINOR
-#ENV PG_VERSION $PG_RELEASE-1.stretch.pro
-
-
 VOLUME /var/lib/pgpro/1c-12/data
-VOLUME /var/log/postgresql
+#VOLUME /var/log/postgresql
 
-COPY docker-entrypoint.sh /
+COPY ./container/docker-entrypoint.sh /
 RUN chmod a+x /docker-entrypoint.sh
 #COPY container/postgresql.conf $PGDATA
-RUN echo 127.0.0.1 srv-pg.solar srv-pg localhost > /etc/hosts
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
 EXPOSE 5432
 CMD ["postgres"]
 
