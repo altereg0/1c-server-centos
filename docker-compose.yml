@@ -37,11 +37,11 @@ services:
     #network_mode: host
     hostname: srv-pg.solar
     environment:
-      - POSTGRES_PASSWORD=Heruvima80
+      - POSTGRES_PASSWORD=pswrd
       - LANG=ru_RU.UTF-8
       - LANGUAGE=ru_RU.UTF-8
       - LC_ALL=ru_RU.UTF-8
-      - POSTGRES_INITDB_ARGS='-EUTF-8'
+      - POSTGRES_INITDB_ARGS='--encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums'
     ports:
       - 5432:5432
     volumes:
@@ -59,8 +59,8 @@ services:
     restart: always
     hostname: srv-pgadmin.solar
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@ostrov.team
-      - PGADMIN_DEFAULT_PASSWORD=Heruvima80
+      - PGADMIN_DEFAULT_EMAIL=root@local.com
+      - PGADMIN_DEFAULT_PASSWORD=pswrd
     ports: 
       - 5050:80
     volumes:

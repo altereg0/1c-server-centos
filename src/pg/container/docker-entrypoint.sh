@@ -63,7 +63,7 @@ if [ "$1" = 'postgres' ]; then
 
 	# look specifically for PG_VERSION, as it is expected in the DB dir
 	if [ ! -s "$PGDATA/PG_VERSION" ]; then
-		eval "su -m postgres -c \"initdb $POSTGRES_INITDB_ARGS\""
+		eval "su postgres -m -c \"initdb $POSTGRES_INITDB_ARGS\""
 
 		# check password first so we can output the warning before postgres
 		# messes it up

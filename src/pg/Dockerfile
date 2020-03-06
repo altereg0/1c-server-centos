@@ -32,16 +32,16 @@ ENV PATH /opt/pgpro/1c-12/bin:$PATH
 ENV PGDATA /var/lib/pgpro/1c-12/data
 ENV PGLOG /var/log/postgresql
 
-RUN /opt/pgpro/1c-12/bin/pg-setup initdb --encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums
+#RUN /opt/pgpro/1c-12/bin/pg-setup initdb --encoding=UTF8 --locale=ru_RU.UTF-8 --data-checksums
 #RUN /opt/pgpro/1c-12/bin/pg-setup initdb
 
 #RUN /opt/pgpro/1c-12/bin/pg-setup service enable
 #RUN service postgrespro-1c-12 start
 
-RUN su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w start \
-	&& /opt/pgpro/1c-12/bin/psql --command \"CREATE USER mrp WITH SUPERUSER PASSWORD 'mrp';\" \
-	&& /opt/pgpro/1c-12/bin/createdb -O mrp mrp \
-	&& /opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w stop"
+#RUN su postgres -m -c "/opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w start \
+#	&& /opt/pgpro/1c-12/bin/psql --command \"CREATE USER mrp WITH SUPERUSER PASSWORD 'mrp';\" \
+#	&& /opt/pgpro/1c-12/bin/createdb -O mrp mrp \
+#	&& /opt/pgpro/1c-12/bin/pg_ctl -D /var/lib/pgpro/1c-12/data -w stop"
 
 RUN mkdir /docker-entrypoint-initdb.d
 RUN mkdir /docker-entrypoint-init.d
